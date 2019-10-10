@@ -49,14 +49,14 @@ function calTotal() {
         var quantity = ans.quantity;
         connection.query(`SELECT * from products WHERE item_id = "${ans.id}"`, function (error, results) {
             if (error) throw error;
-            console.log(results[0].stock);
+            // console.log(results[0].stock);
             if (results[0].stock > quantity) {
                 console.log("You can buy, enjoy!");
                 var newStock = results[0].stock - quantity;
                 connection.query(
                     "UPDATE products SET stock = ? WHERE item_id = ?", [newStock, ans.id], function (error, results) {
                     if (error) throw error;
-                    console.log(results);
+                    // console.log(results);
 
                     console.log("All set, thank you and please come again!");
 
