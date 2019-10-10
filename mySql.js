@@ -51,13 +51,15 @@ function calTotal() {
             if (error) throw error;
             // console.log(results[0].stock);
             if (results[0].stock > quantity) {
-                console.log("You can buy, enjoy!");
+                console.log("You're in luck, you can buy! Your total is");
+                var total = quantity * results[0].price;
+                console.log(total);
                 var newStock = results[0].stock - quantity;
                 connection.query(
                     "UPDATE products SET stock = ? WHERE item_id = ?", [newStock, ans.id], function (error, results) {
                     if (error) throw error;
                     // console.log(results);
-
+                    
                     console.log("All set, thank you and please come again!");
 
                 })
