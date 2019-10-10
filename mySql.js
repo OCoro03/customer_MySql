@@ -1,5 +1,6 @@
 var mysql = require("mysql");
-var inquirer = require("inquirer")
+var inquirer = require("inquirer");
+// var cTable = require("console.table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -10,6 +11,8 @@ var connection = mysql.createConnection({
 
 //Caused error:
 // connection.connect();
+
+// console.table(["product_name", "department_name", "price", "stock"], products);
 
 connection.connect(function (err) {
     if (err) throw err;
@@ -29,28 +32,35 @@ function dispProd(){
 function calTotal(){
 
 
-inquirer.prompt([
-    {
-        type: "input",
-        name: "id",
-        message: "Do you see anything you like? Enter it's id"
-    },
-    {
-        type: "input",
-        name: "quantity",
-        message: "How many would you like?"
-    }
-]).then(function(ans){
-    console.log(ans);
-    connection.query(`SELECT * from products where item_id = "${ans.id}"`, function (error, results) {
-        if (error) throw error;
-        console.log(results[0].stock);
-        if(results[0].stock > ans.quantity){
-            console.log("you can buy");
-            
+    
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "id",
+            message: "Do you see anything you like? Enter it's id"
+        },
+        {
+            type: "input",
+            name: "quantity",
+            message: "How many would you like?"
+        }
+    ]).then(function(ans){
+        console.log(ans);
+        var quantity = ans.quantity;
+        connection.query(`SELECT * from products where item_id = "${ans.id}"`, function (error, results) {
+            if (error) throw error;
+            console.log(results[0].stock);
+            if(results[0].stock > ans.quantity){
+                console.log("You can buy, enjoy!");
+            var newStock = results[0].stock > ans.quantity - quantity;
+            connection.query("UPDATE products SET stock = " + newStock + "WHERE id = " + results[0].id, function(error, results) {
+                if (error) throw error;
+                console.log("All set, thank you and please come again!");
+                
+            })
         }
         else{
-            console.log("insufficient quantity");
+            console.log("Sorry, insufficient quantity. Try again.");
             
         }
     });
