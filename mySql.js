@@ -21,7 +21,7 @@ connection.connect(function (err) {
     // options();
 });
 
-function dispProd(){
+function dispProd() {
     connection.query("SELECT * from products", function (error, results) {
         if (error) throw error;
         console.log(results);
@@ -29,10 +29,10 @@ function dispProd(){
     });
 }
 
-function calTotal(){
+function calTotal() {
 
 
-    
+
     inquirer.prompt([
         {
             type: "input",
@@ -44,28 +44,45 @@ function calTotal(){
             name: "quantity",
             message: "How many would you like?"
         }
-    ]).then(function(ans){
-        console.log(ans);
+    ]).then(function (ans) {
+        // console.log(ans);
         var quantity = ans.quantity;
-        connection.query(`SELECT * from products where item_id = "${ans.id}"`, function (error, results) {
+        connection.query(`SELECT * from products WHERE item_id = "${ans.id}"`, function (error, results) {
             if (error) throw error;
             console.log(results[0].stock);
-            if(results[0].stock > ans.quantity){
+            if (results[0].stock > quantity) {
                 console.log("You can buy, enjoy!");
-            var newStock = results[0].stock > ans.quantity - quantity;
-            connection.query("UPDATE products SET stock = " + newStock + "WHERE id = " + results[0].id, function(error, results) {
-                if (error) throw error;
-                console.log("All set, thank you and please come again!");
-                
-            })
-        }
-        else{
-            console.log("Sorry, insufficient quantity. Try again.");
-            
-        }
-    });
-    
-});
+                var newStock = results[0].stock - quantity;
+                connection.query(
+                    "UPDATE products SET stock = ? WHERE item_id = ?", [newStock, ans.id], function (error, results) {
+                    if (error) throw error;
+                    console.log(results);
+
+                    console.log("All set, thank you and please come again!");
+
+                })
+
+                // connection.query("UPDATE products SET stock = " + newStock + "WHERE id = " + results[0].id, function (error, results) {
+                //     if (error) throw error;
+                //     console.log(results);
+
+                //     console.log("All set, thank you and please come again!");
+
+                // })
+
+            }
+            else {
+                console.log("Sorry, insufficient quantity. Try again.");
+
+            }
+        });
+
+    })
+
+    //     .then(function(){
+    //     var newStock = results[0].stock - quantity;
+
+    // });
 };
 // .then(function(ans){
 //     console.log(ans);
@@ -73,7 +90,7 @@ function calTotal(){
 //         if (error) throw error;
 //         console.log(results);
 //     });
-    
+
 // });
 
 
@@ -86,7 +103,7 @@ function calTotal(){
 
 //     ]).then(function (ans) {
 //         console.log(ans);
-        
+
 //     })
 
 // };
